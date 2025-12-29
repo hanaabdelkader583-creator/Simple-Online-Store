@@ -8,7 +8,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
@@ -29,12 +28,140 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
     <div id="checkoutContainer"></div>
 
-    <!-- Toast Container -->
     <div id="toastContainer" class="toast-container"></div>
 
     <script src="script.js"></script>
+    <script>
+        function displayCheckout() {
+            const cart = getCart();
+            const checkoutContainer = document.getElementById('checkoutContainer');
+            
+            if (cart.length === 0) {
+                checkoutContainer.innerHTML = `
+                    <div class="container">
+                        <div class="cart-empty">
+                            <h2>Your cart is empty</h2>
+                            <p style="color: var(--gray); margin-bottom: 2rem;">Add some products to checkout!</p>
+                            <a href="products.html" class="btn btn-primary">Continue Shopping</a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = 10;
+            const total = subtotal + shipping;
+            
+            checkoutContainer.innerHTML = `
+                <div class="checkout-container">
+                    <div class="checkout-section">
+                        <h2>Shipping Information</h2>
+                        <form id="checkoutForm">
+                            <div class="form-group">
+                                <label for="fullName">Full Name</label>
+                                <input type="text" id="fullName" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input type="text" id="address" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="city">City</label>
+                                <input type="text" id="city" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="zipCode">ZIP Code</label>
+                                <input type="text" id="zipCode" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                                Place Order
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="checkout-section">
+                        <h2>Order Summary</h2>
+                        ${cart.map(item => `
+                            <div class="order-item">
+                                <div>
+                                    <div style="font-weight: 500; color: var(--dark-purple);">${item.name}</div>
+                                    <div style="color: var(--gray); font-size: 0.875rem;">Qty: ${item.quantity}</div>
+                                </div>
+                                <div style="font-weight: 500;">$${(item.price * item.quantity).toFixed(2)}</div>
+                            </div>
+                        `).join('')}
+                        
+                        <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid var(--border);">
+                            <div class="summary-row">
+                                <span>Subtotal:</span>
+                                <span>$${subtotal.toFixed(2)}</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Shipping:</span>
+                                <span>$${shipping.toFixed(2)}</span>
+                            </div>
+                            <div class="summary-row summary-total">
+                                <span>Total:</span>
+                                <span>$${total.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Attach form submit handler
+            const form = document.getElementById('checkoutForm');
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    // Grab values from the new form
+                    const name = document.getElementById('fullName').value;
+                    const email = document.getElementById('email').value;
+                    const address = document.getElementById('address').value;
+
+                    // Set them into the hidden fields script.js expects, or just update script.js
+                    // But to keep it simple, we will manually trigger the placeOrder logic here:
+                    
+                    // Simple Validation
+                    if(!name || !email || !address) {
+                        showToast("Please fill all fields!", "error");
+                        return;
+                    }
+
+                    const cart = getCart();
+                    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                    const total = subtotal + 10;
+                    const orderDetails = cart.map(item => `${item.name} (x${item.quantity})`).join(', ');
+
+                    // Send to Python Backend
+                    $.post('server.php?action=place_order', {
+                        name: name,
+                        email: email,
+                        address: address,
+                        total: total,
+                        details: orderDetails
+                    }, function(data) {
+                        if(data.status === "success") {
+                            showToast("Order Placed Successfully!", "success");
+                            localStorage.removeItem('cart');
+                            setTimeout(() => window.location.href = 'index.html', 2000);
+                        } else {
+                            showToast("Error: " + data.message, "error");
+                        }
+                    }, 'json');
+                });
+            }
+        }
+        
+        // Display checkout on page load
+        displayCheckout();
+    </script>
 </body>
 </html>
