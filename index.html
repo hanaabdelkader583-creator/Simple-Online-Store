@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Simple Online Store</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-text">Simple Online Store</span>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="products.html" class="nav-link">Products</a></li>
+                <li><a href="cart.html" class="nav-link">
+                    Cart <span class="cart-badge" id="cartBadge">0</span>
+                </a></li>
+                <li><a href="login.html" class="nav-link">Login</a></li>
+                <li><a href="admin.html" class="nav-link">Admin</a></li>
+            </ul>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span class="hamburger"></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="container">
+            <h1>Welcome to Simple Online Store</h1>
+            <p>Discover amazing products at great prices</p>
+            <a href="products.html" class="btn btn-primary">Shop Now</a>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Categories Section -->
+        <section class="categories">
+            <h2 class="section-title">Shop by Category</h2>
+            <div class="category-grid">
+                <a href="products.html?category=Accessories" class="category-card">
+                    <div class="category-icon">👜</div>
+                    <h3>Accessories</h3>
+                    <p>Wallets, sunglasses, belts & more</p>
+                </a>
+                <a href="products.html?category=Shoes" class="category-card">
+                    <div class="category-icon">👟</div>
+                    <h3>Shoes</h3>
+                    <p>Sneakers, boots, casual & sports</p>
+                </a>
+                <a href="products.html?category=Clothes" class="category-card">
+                    <div class="category-icon">👕</div>
+                    <h3>Clothes</h3>
+                    <p>T-shirts, jeans, dresses & more</p>
+                </a>
+            </div>
+        </section>
+        
+        <!-- Best Sellers Section -->
+        <section class="best-sellers">
+            <h2 class="section-title">Best Sellers</h2>
+            <div class="product-grid" id="bestSellers"></div>
+        </section>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+    <footer class="site-footer clearfix">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>About Us</h3>
+                <p style="color: #ccc; line-height: 1.6;">
+                    Simple Online Store is your #1 destination for fashion, accessories, and footwear. 
+                    Quality products at affordable prices.
+                </p>
+            </div>
+
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">All Products</a></li>
+                    <li><a href="cart.html">My Cart</a></li>
+                    <li><a href="login.html">Login / Register</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>Contact Info</h3>
+                <ul>
+                    <li>📍 123 Fashion Street, Alex</li>
+                    <li>📞 +20 123 456 7890</li>
+                    <li>✉️ support@simplestore.com</li>
+                    <li>🕒 Open 9AM - 9PM</li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Display best sellers 
+        const bestSellersContainer = document.getElementById('bestSellers');
+        const bestSellers = products.slice(0, 3);
+        
+        bestSellersContainer.innerHTML = bestSellers.map(product => `
+            <div class="product-card">
+                <img src="${product.image}" alt="${product.name}" class="product-image">
+                <div class="product-info">
+                    <div class="product-category">${product.category}</div>
+                    <h3 class="product-title">${product.name}</h3>
+                    <div class="product-price">$${product.price}</div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="addToCart(${product.id})">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    </script>
+</body>
+</html>

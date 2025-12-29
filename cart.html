@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Simple Online Store</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-text">Simple Online Store</span>
+            </div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="products.html" class="nav-link">Products</a></li>
+                <li><a href="cart.html" class="nav-link">
+                    Cart <span class="cart-badge" id="cartBadge">0</span>
+                </a></li>
+                <li><a href="login.html" class="nav-link">Login</a></li>
+                <li><a href="admin.html" class="nav-link">Admin</a></li>
+            </ul>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span class="hamburger"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="cart-container" id="cartContainer"></div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+    <footer class="site-footer clearfix">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>About Us</h3>
+                <p style="color: #ccc; line-height: 1.6;">
+                    Simple Online Store is your #1 destination for fashion, accessories, and footwear. 
+                    Quality products at affordable prices.
+                </p>
+            </div>
+
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">All Products</a></li>
+                    <li><a href="cart.html">My Cart</a></li>
+                    <li><a href="login.html">Login / Register</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>Contact Info</h3>
+                <ul>
+                    <li>📍 123 Fashion Street, Alex</li>
+                    <li>📞 +20 123 456 7890</li>
+                    <li>✉️ support@simplestore.com</li>
+                    <li>🕒 Open 9AM - 9PM</li>
+                </ul>
+            </div>
+        </div>
+    </footer> 
+    <script src="script.js"></script>
+    <script>
+        function displayCart() {
+            const cart = getCart();
+            const cartContainer = document.getElementById('cartContainer');
+            
+            if (cart.length === 0) {
+                cartContainer.innerHTML = `
+                    <div class="cart-empty">
+                        <h2>Your cart is empty</h2>
+                        <p style="color: var(--gray); margin-bottom: 2rem;">Add some products to get started!</p>
+                        <a href="products.html" class="btn btn-primary">Continue Shopping</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const shipping = 10;
+            const total = subtotal + shipping;
+            
+            cartContainer.innerHTML = `
+                <h1 class="section-title">Shopping Cart</h1>
+                
+                <div class="cart-items">
+                    ${cart.map(item => `
+                        <div class="cart-item">
+                            <img src="${item.image}" alt="${item.name}" class="cart-item-image">
+                            <div class="cart-item-details">
+                                <h3 class="cart-item-title">${item.name}</h3>
+                                <div class="cart-item-category">${item.category}</div>
+                                <div class="cart-item-price">$${item.price}</div>
+                            </div>
+                            <div class="cart-item-actions">
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn" onclick="updateQuantity(${item.id}, ${item.quantity - 1})">-</button>
+                                    <span class="quantity-display">${item.quantity}</span>
+                                    <button class="quantity-btn" onclick="updateQuantity(${item.id}, ${item.quantity + 1})">+</button>
+                                </div>
+                                <button class="remove-btn" onclick="removeFromCart(${item.id})">Remove</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="cart-summary">
+                    <h2>Order Summary</h2>
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span>$${subtotal.toFixed(2)}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping:</span>
+                        <span>$${shipping.toFixed(2)}</span>
+                    </div>
+                    <div class="summary-row summary-total">
+                        <span>Total:</span>
+                        <span>$${total.toFixed(2)}</span>
+                    </div>
+                    <a href="checkout.html" class="btn btn-primary" style="width: 100%; margin-top: 1rem; display: inline-block; text-align: center; text-decoration: none;">
+                        Proceed to Checkout
+                    </a>
+                </div>
+            `;
+        }
+        
+        displayCart();
+    </script>
+</body>
+</html>
