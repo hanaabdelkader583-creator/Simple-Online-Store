@@ -69,7 +69,7 @@ $(document).ready(function() {
 
 // --- 2. DATA FETCHING  ---
 function initStore() {
-    $.get('server.php?action=get_products', function(data) {
+    $.get('/api/products', function(data) {
         products = data; 
         
         if ($('#productGrid').length || $('#bestSellers').length) displayProducts(); 
@@ -295,7 +295,7 @@ function placeOrder() {
     const total = subtotal + 10;
     const orderDetails = cart.map(item => `${item.name} (x${item.quantity})`).join(', ');
 
-    $.post('server.php?action=place_order', {
+    $.post('/api/orders', {
         name: name,
         email: email,
         address: address,
@@ -341,7 +341,7 @@ function handleRegister() {
 
     const formData = { name: name, email: email, password: password };
 
-    $.post('server.php?action=register', formData, function(data) {
+    $.post('/api/register', formData, function(data) {
         if(data.status === "success") {
             showToast(data.message, 'success');
             $('#signupForm')[0].reset(); 
@@ -357,7 +357,7 @@ function handleLogin() {
         password: $('#loginPassword').val()
     };
 
-    $.post('server.php?action=login', formData, function(data) {
+    $.post('/api/login', formData, function(data) {
         if(data.status === "success") {
             showToast(data.message, 'success');
             localStorage.setItem('currentUser', JSON.stringify({
@@ -420,10 +420,10 @@ function saveProduct() {
         image: $('#productImage').val()
     };
     
-    let url = 'server.php?action=add_product';
+    let url = '/api/products/add';
     if(id) {
         formData.id = id;
-        url = 'server.php?action=update_product';
+        url = '/api/products/update';
     }
 
     $.post(url, formData, function(data) {
@@ -438,7 +438,7 @@ function saveProduct() {
 
 function deleteProduct(id) {
     if(confirm("Are you sure?")) {
-        $.post('server.php?action=delete_product', {id: id}, function(data) {
+        $.post('/api/products/delete', {id: id}, function(data) {
             alert(data.message);
             window.location.reload();
         }, 'json');
