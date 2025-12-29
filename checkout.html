@@ -141,7 +141,7 @@
                     const orderDetails = cart.map(item => `${item.name} (x${item.quantity})`).join(', ');
 
                     // Send to Python Backend
-                    $.post('server.php?action=place_order', {
+                    $.post('/api/orders', {
                         name: name,
                         email: email,
                         address: address,
